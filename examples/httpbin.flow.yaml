@@ -1,0 +1,52 @@
+name: httpbin smoke flow
+description: A self-contained flow you can run against public httpbin.org
+baseUrl: https://httpbin.org
+
+vars:
+  email: demo@example.com
+
+steps:
+  - name: GET /get echoes query
+    method: GET
+    path: /get
+    query:
+      user: ${email}
+    expect:
+      status: 200
+      body:
+        jsonPath:
+          $.args.user: ${email}
+
+  - name: POST /post echoes body and extracts header
+    method: POST
+    path: /post
+    headers:
+      X-Flow: curlflow
+    body:
+      hello: world
+      email: ${email}
+    expect:
+      status: 200
+      body:
+        jsonPath:
+          $.json.hello: world
+          $.headers["X-Flow"]: curlflow
+    extract:
+      echoedEmail: $.json.email
+
+  - name: GET /status/204 returns no content
+    method: GET
+    path: /status/204
+    expect:
+      status: [200, 204]
+
+  - name: Verify extracted var from earlier step
+    method: GET
+    path: /get
+    query:
+      prev: ${echoedEmail}
+    expect:
+      status: 200
+      body:
+        jsonPath:
+          $.args.prev: ${email}
