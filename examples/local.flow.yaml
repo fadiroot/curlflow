@@ -1,0 +1,79 @@
+name: Local smoke flow
+description: Runs against examples/local-server.mjs
+baseUrl: http://127.0.0.1:4999
+
+vars:
+  email: demo@example.com
+  password: secret123
+
+steps:
+  - name: Login
+    method: POST
+    path: /auth/login
+    body:
+      email: ${email}
+      password: ${password}
+    expect:
+      status: 200
+      body:
+        jsonPath:
+          $.token: { exists: true }
+          $.user.role: admin
+    extract:
+      token: $.token
+      userId: $.user.id
+
+  - name: Create user record
+    method: POST
+    path: /users
+    headers:
+      Authorization: Bearer ${token}
+    body:
+      name: Alice
+      email: ${email}
+      createdBy: ${userId}
+    expect:
+      status: 201
+      body:
+        jsonPath:
+          $.id: { type: number }
+          $.email: ${email}
+    extract:
+      newUserId: $.id
+
+  - name: Update user
+    method: PATCH
+    path: /users/${newUserId}
+    headers:
+      Authorization: Bearer ${token}
+    body:
+      name: Alice Updated
+    expect:
+      status: 200
+      body:
+        jsonPath:
+          $.name: Alice Updated
+
+  - name: Verify update persisted
+    method: GET
+    path: /users/${newUserId}
+    headers:
+      Authorization: Bearer ${token}
+    expect:
+      status: 200
+      body:
+        jsonPath:
+          $.name: Alice Updated
+          $.email: ${email}
+          $.createdBy: ${userId}
+
+  - name: Unauthorized create is rejected
+    method: POST
+    path: /users
+    body:
+      name: ShouldFail
+    expect:
+      status: 401
+      body:
+        jsonPath:
+          $.error: unauthorized

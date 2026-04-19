@@ -1,0 +1,52 @@
+{
+  "flow": "Intentional failure demo",
+  "ok": false,
+  "durationMs": 17,
+  "startedAt": "2026-04-19T13:36:15.520Z",
+  "finishedAt": "2026-04-19T13:36:15.537Z",
+  "summary": {
+    "total": 1,
+    "passed": 0,
+    "failed": 1,
+    "skipped": 0
+  },
+  "steps": [
+    {
+      "index": 0,
+      "name": "Login",
+      "ok": false,
+      "skipped": false,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:4999/auth/login"
+      },
+      "response": {
+        "status": 200,
+        "durationMs": 16,
+        "body": {
+          "token": "test-token-abc",
+          "user": {
+            "id": 42,
+            "email": "x@y.z",
+            "role": "admin"
+          }
+        }
+      },
+      "failedAssertions": [
+        {
+          "ok": false,
+          "field": "status",
+          "expected": 401,
+          "actual": 200,
+          "message": "Expected status 401, got 200"
+        },
+        {
+          "ok": false,
+          "field": "body.jsonPath.$.error",
+          "expected": "bad credentials",
+          "message": "JSONPath \"$.error\" expected \"bad credentials\", got undefined"
+        }
+      ]
+    }
+  ]
+}
