@@ -1,0 +1,40 @@
+{
+  "name": "curlflow",
+  "version": "0.1.0",
+  "description": "Run backend feature flows as repeatable curl-style HTTP tests. Designed to be driven by Cursor.",
+  "type": "module",
+  "bin": {
+    "curlflow": "dist/cli.js"
+  },
+  "main": "dist/cli.js",
+  "files": [
+    "dist",
+    "templates",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/cli.ts",
+    "start": "node dist/cli.js",
+    "prepublishOnly": "npm run build",
+    "smoke": "npm run build && node dist/cli.js run examples/httpbin.flow.yaml"
+  },
+  "keywords": ["curl", "http", "test", "api", "cli", "cursor", "flow"],
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "commander": "^12.1.0",
+    "jsonpath-plus": "^10.2.0",
+    "picocolors": "^1.1.1",
+    "yaml": "^2.6.1",
+    "zod": "^3.23.8",
+    "dotenv": "^16.4.7"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}

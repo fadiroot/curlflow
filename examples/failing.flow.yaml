@@ -1,0 +1,14 @@
+name: Intentional failure demo
+baseUrl: http://127.0.0.1:4999
+steps:
+  - name: Login
+    method: POST
+    path: /auth/login
+    body:
+      email: x@y.z
+      password: wrong
+    expect:
+      status: 401
+      body:
+        jsonPath:
+          $.error: bad credentials
